@@ -1,17 +1,11 @@
-import { useState } from 'react';
+import FileUpload from './components/FileUpload';
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <>
-      <h1>Calc</h1>
-      <div className="card w-96 bg-red-600">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-      </div>
-    </>
+    <div className="p-2">
+      <h1 className="mb-3 text-2xl">PF KEYS</h1>
+      <FileUpload />
+    </div>
   );
 }
 
