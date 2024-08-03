@@ -6,6 +6,7 @@ export type Entry = {
   vitals: string[];
   region: string;
   isOld: boolean;
+  entryId: number;
 };
 
-export type EntryLite = Omit<Entry, 'base' | 'vitals' | 'region' | 'isOld'>;
+export type EntryLite = Omit<Entry, 'base' | 'vitals' | 'region' | 'isOld' | 'entryId'>;

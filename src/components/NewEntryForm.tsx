@@ -1,12 +1,11 @@
 import { FC, useState } from 'react';
-import { EntryLite } from '../types/shared';
 import { Cross, Plus } from './shared/Icons';
+import { EntryLite } from '../types/shared';
+import { useEntriesStoreActions } from '../stores/entries-store';
 
-type Props = {
-  addNewEntry: (newEntry: EntryLite) => void;
-};
+export const NewEntryForm: FC = () => {
+  const { addEntry } = useEntriesStoreActions();
 
-export const NewEntryForm: FC<Props> = ({ addNewEntry }) => {
   const [newEntry, setNewEntry] = useState<EntryLite>({
     freq: 0,
     period: 0,
@@ -40,8 +39,8 @@ export const NewEntryForm: FC<Props> = ({ addNewEntry }) => {
 
   const handleAddEntryClick = () => {
     if (!newEntry.keys.length || !newEntry.freq || !newEntry.period) return;
-    addNewEntry(newEntry);
-    setNewEntry({ freq: 0, keys: [], period: 0 });
+    addEntry(newEntry);
+    setNewEntry({ freq: 0, period: 0, keys: [] });
   };
 
   const handleNewEntryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,10 +109,7 @@ export const NewEntryForm: FC<Props> = ({ addNewEntry }) => {
       </div>
       <div className="!mt-3 flex gap-2">
         {newEntry.keys.map((key, index) => (
-          <div
-            key={index}
-            className="flex items-center rounded-md bg-green-900/80 px-2 py-1"
-          >
+          <div key={index} className="flex items-center rounded-md bg-green-900/80 px-2 py-1">
             <span className="mr-2">{key}</span>
             <button onClick={() => deleteKey(index)}>
               <Cross />
