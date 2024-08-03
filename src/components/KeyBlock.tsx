@@ -17,8 +17,13 @@ export const KeyBlock = ({ keyIndex, entryId, isOld }: { keyIndex: number; entry
   };
 
   useEffect(() => {
-    console.log(0, 'keyBlock rerender');
+    console.log(0, '[KeyBlock] render');
   }, []);
+
+  useEffect(() => {
+    console.log(0, '[KeyBlock] keyString changed');
+    setLocalValue(keyString);
+  }, [keyString]);
 
   return (
     <div
@@ -35,6 +40,7 @@ export const KeyBlock = ({ keyIndex, entryId, isOld }: { keyIndex: number; entry
       <button
         onClick={() => {
           deleteKey(entryId, keyIndex);
+          console.log(entryId, keyIndex);
         }}
         className="h-full bg-red-400 px-1 transition-all hover:bg-red-500"
       >

@@ -9,10 +9,8 @@ export const EntryBlock = ({ entry }: { entry: Entry }) => {
   const { freq, period, keys, isOld, entryId } = entry;
   const { deleteEntry, changeFreq, changePeriod } = useEntriesStoreActions();
 
-  const keysLength = keys.length;
-
   useEffect(() => {
-    console.log(1, 'keys changed');
+    console.log(1, '[EntryBlock] keys changed', keys);
   }, [keys]);
 
   return (
@@ -52,8 +50,8 @@ export const EntryBlock = ({ entry }: { entry: Entry }) => {
       <div className="flex items-center rounded-sm bg-red-400 px-1 text-black">{(+freq / +period).toFixed(1)}</div>
 
       <div className="flex flex-wrap gap-2 gap-y-1">
-        {Array.from({ length: keysLength }, (_, i) => i).map((keyIndex) => (
-          <KeyBlock keyIndex={keyIndex} entryId={entryId} isOld={isOld} />
+        {keys.map((key, keyIndex) => (
+          <KeyBlock key={keyIndex} keyIndex={keyIndex} entryId={entryId} isOld={isOld} />
         ))}
       </div>
 
