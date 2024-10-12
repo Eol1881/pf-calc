@@ -1,12 +1,9 @@
 export type Entry = {
-  keys: string[];
+  key: string;
   freq: number;
   period: number;
   base: string;
-  vitals: string[];
   region: string;
-  isOld: boolean;
-  entryId: number;
 };
 
-export type EntryLite = Omit<Entry, 'base' | 'vitals' | 'region' | 'isOld' | 'entryId'>;
+export type NewEntry = Omit<Entry, 'base' | 'region'>;

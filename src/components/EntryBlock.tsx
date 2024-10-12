@@ -1,23 +1,16 @@
-import { useEffect } from 'react';
 import { useEntriesStoreActions } from '../stores/entries-store';
-import { KeyBlock } from './KeyBlock';
-import { NewKeyBlock } from './NewKeyBlock';
 import { Cross } from './shared/Icons';
 import { Entry } from '../types/shared';
 
 export const EntryBlock = ({ entry }: { entry: Entry }) => {
-  const { freq, period, keys, isOld, entryId } = entry;
+  const { freq, period, key } = entry;
   const { deleteEntry, changeFreq, changePeriod } = useEntriesStoreActions();
-
-  useEffect(() => {
-    console.log(1, '[EntryBlock] keys changed', keys);
-  }, [keys]);
 
   return (
     <div className="flex gap-1">
       <button
         onClick={() => {
-          deleteEntry(entryId);
+          deleteEntry(key);
         }}
         className="flex w-6 shrink-0 items-center justify-center rounded-md bg-white/20 transition-all hover:bg-red-600/90"
       >
@@ -31,7 +24,7 @@ export const EntryBlock = ({ entry }: { entry: Entry }) => {
           min={1}
           value={freq}
           onChange={(e) => {
-            changeFreq(entryId, +e.target.value);
+            changeFreq(key, +e.target.value);
           }}
         />
       </label>
@@ -43,19 +36,13 @@ export const EntryBlock = ({ entry }: { entry: Entry }) => {
           min={1}
           value={period}
           onChange={(e) => {
-            changePeriod(entryId, +e.target.value);
+            changePeriod(key, +e.target.value);
           }}
         />
       </label>
       <div className="flex items-center rounded-sm bg-red-400 px-1 text-black">{(+freq / +period).toFixed(1)}</div>
 
-      <div className="flex flex-wrap gap-2 gap-y-1">
-        {keys.map((key, keyIndex) => (
-          <KeyBlock key={keyIndex} keyIndex={keyIndex} entryId={entryId} isOld={isOld} />
-        ))}
-      </div>
-
-      <NewKeyBlock entryId={entryId} />
+      <div className="flex flex-wrap gap-2 gap-y-1">{key}</div>
     </div>
   );
 };

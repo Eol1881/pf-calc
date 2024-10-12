@@ -1,46 +1,25 @@
 import { FC, useState } from 'react';
-import { Cross, Plus } from './shared/Icons';
-import { EntryLite } from '../types/shared';
+import { NewEntry } from '../types/shared';
 import { useEntriesStoreActions } from '../stores/entries-store';
 
 export const NewEntryForm: FC = () => {
   const { addEntry } = useEntriesStoreActions();
 
-  const [newEntry, setNewEntry] = useState<EntryLite>({
+  const [newEntry, setNewEntry] = useState<NewEntry>({
     freq: 0,
     period: 0,
-    keys: [],
+    key: '',
   });
-
-  const [newKey, setNewKey] = useState('');
 
   const handleKeyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (/[\.,;'"]/.test(event.target.value)) return;
-    setNewKey(event.target.value);
-  };
-
-  const handleKeyKeydown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') addKey();
-  };
-
-  const addKey = () => {
-    if (newKey.trim() !== '') {
-      setNewEntry({ ...newEntry, keys: [...newEntry.keys, newKey.trim()] });
-      setNewKey('');
-    }
-  };
-
-  const deleteKey = (index: number) => {
-    setNewEntry({
-      ...newEntry,
-      keys: newEntry.keys.filter((_, i) => i !== index),
-    });
+    setNewEntry({ ...newEntry, key: event.target.value });
   };
 
   const handleAddEntryClick = () => {
-    if (!newEntry.keys.length || !newEntry.freq || !newEntry.period) return;
+    if (!newEntry.key || !newEntry.freq || !newEntry.period) return;
     addEntry(newEntry);
-    setNewEntry({ freq: 0, period: 0, keys: [] });
+    setNewEntry({ freq: 0, period: 0, key: '' });
   };
 
   const handleNewEntryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,36 +68,19 @@ export const NewEntryForm: FC = () => {
       </div>
 
       <div className="flex">
-        <label htmlFor="keys">Добавить вариант:</label>
+        <label htmlFor="keys">Запрос:</label>
         <input
-          className="ml-2 rounded-l-md pl-2 outline-none"
+          className="ml-3 min-w-[40vw] rounded-md pl-2 outline-none"
           type="text"
           id="keys"
           name="keys"
-          value={newKey}
+          value={newEntry.key}
           onChange={handleKeyChange}
-          onKeyDown={handleKeyKeydown}
           onClick={(e) => (e.target as HTMLInputElement).select()}
         />
-        <button
-          className="flex w-6 items-center justify-center rounded-r-md bg-green-900 font-bold transition-all hover:bg-green-800"
-          onClick={addKey}
-        >
-          <Plus />
-        </button>
-      </div>
-      <div className="!mt-3 flex gap-2">
-        {newEntry.keys.map((key, index) => (
-          <div key={index} className="flex items-center rounded-md bg-green-900/80 px-2 py-1">
-            <span className="mr-2">{key}</span>
-            <button onClick={() => deleteKey(index)}>
-              <Cross />
-            </button>
-          </div>
-        ))}
       </div>
       <button
-        className="!mt-5 rounded-md bg-slate-800 px-2 py-1 font-semibold transition-all hover:bg-slate-700"
+        className="!mt-4 rounded-md bg-slate-800 px-2 py-1 font-semibold transition-all hover:bg-slate-700"
         onClick={handleAddEntryClick}
       >
         Добавить запись

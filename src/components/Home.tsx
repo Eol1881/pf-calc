@@ -1,6 +1,6 @@
 import React from 'react';
 import { NewEntryForm } from './NewEntryForm';
-import { calculateTotalRequestsPerDay, combineArrays, convertEntrieToString, parseKey } from '../_models/common';
+import { calculateTotalRequestsPerDay, convertEntryToString, parseKey } from '../_models/common';
 import { EntryBlock } from './EntryBlock';
 import { useEntries, useEntriesStoreActions } from '../stores/entries-store';
 
@@ -27,7 +27,7 @@ export const Home = () => {
   };
 
   const downloadFull = () => {
-    const data = entries.map((entry) => convertEntrieToString(entry)).join('\n');
+    const data = entries.map((entry) => convertEntryToString(entry)).join('\n');
     const blob = new Blob([data], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -39,14 +39,7 @@ export const Home = () => {
   };
 
   const downloadQueriesOnly = () => {
-    const resultQueries: string[] = [];
-
-    entries.forEach((entry) => {
-      const { keys, vitals } = entry;
-      const combinations = combineArrays(keys, vitals);
-      resultQueries.push(...combinations);
-    });
-
+    const resultQueries = entries.map((entry) => entry.key);
     const data = resultQueries.join('\n');
     const blob = new Blob([data], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -66,7 +59,7 @@ export const Home = () => {
 
       <div className="mt-3 space-y-1">
         {entries.map((entry) => (
-          <EntryBlock key={entry.entryId} entry={entry} />
+          <EntryBlock key={entry.key} entry={entry} />
         ))}
       </div>
 

@@ -1,18 +1,16 @@
 import { create } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
-import { Entry, EntryLite } from '../types/shared';
+import { Entry, NewEntry } from '../types/shared';
 
 export type EntriesStore = {
   entries: Entry[];
 
   setEntries: (entries: Entry[]) => void;
-  addEntry: (entry: EntryLite) => void;
-  deleteEntry: (entryId: Entry['entryId']) => void;
-  changeFreq: (entryId: Entry['entryId'], freq: Entry['freq']) => void;
-  changePeriod: (entryId: Entry['entryId'], period: Entry['period']) => void;
-  changeKey: (entryId: Entry['entryId'], updatedKey: string, keyIndex: number) => void;
-  deleteKey: (entryId: Entry['entryId'], keyIndex: number) => void;
-  addKey: (entryId: Entry['entryId'], newKey: string) => void;
+  addEntry: (entry: NewEntry) => void;
+  deleteEntry: (key: Entry['key']) => void;
+  changeFreq: (key: Entry['key'], freq: Entry['freq']) => void;
+  changePeriod: (key: Entry['key'], period: Entry['period']) => void;
+  deleteKey: (key: Entry['key'], keyIndex: number) => void;
 };
 
 export const useEntriesStore = create<EntriesStore>((set, get) => ({
@@ -29,9 +27,7 @@ export const useEntriesStore = create<EntriesStore>((set, get) => ({
       ...entries,
       {
         ...entry,
-        entryId: Date.now(),
         base: entries[0].base,
-        vitals: entries[0].vitals,
         region: entries[0].region,
         isOld: false,
       },
@@ -39,67 +35,43 @@ export const useEntriesStore = create<EntriesStore>((set, get) => ({
     set({ entries: updatedEntries });
   },
 
-  deleteEntry: (entryId) => {
+  deleteEntry: (key) => {
     const { entries } = get();
-    const updatedEntries = entries.filter((entry) => entry.entryId !== entryId);
+    const updatedEntries = entries.filter((entry) => entry.key !== key);
     set({ entries: updatedEntries });
   },
 
-  changeFreq: (entryId, freq) => {
+  changeFreq: (key, freq) => {
     const { entries } = get();
-    const updatedEntries = entries.map((entry) => (entry.entryId === entryId ? { ...entry, freq } : entry));
+    const updatedEntries = entries.map((entry) => (entry.key === key ? { ...entry, freq } : entry));
     set({ entries: updatedEntries });
   },
 
-  changePeriod: (entryId, period) => {
+  changePeriod: (key, period) => {
     const { entries } = get();
-    const updatedEntries = entries.map((entry) => (entry.entryId === entryId ? { ...entry, period } : entry));
+    const updatedEntries = entries.map((entry) => (entry.key === key ? { ...entry, period } : entry));
     set({ entries: updatedEntries });
   },
 
-  changeKey: (entryId, updatedKey, keyIndex) => {
+  deleteKey: (key) => {
     const { entries } = get();
-    const updatedEntries = entries.map((entry) =>
-      entry.entryId === entryId
-        ? { ...entry, keys: entry.keys.map((key, i) => (i === keyIndex ? updatedKey : key)) }
-        : entry
-    );
-    set({ entries: updatedEntries });
-  },
-
-  deleteKey: (entryId, keyIndex) => {
-    const { entries } = get();
-    const updatedEntries = entries.map((entry) =>
-      entry.entryId === entryId ? { ...entry, keys: entry.keys.filter((key, i) => i !== keyIndex) } : entry
-    );
-    set({ entries: updatedEntries });
-  },
-
-  addKey: (entryId, newKey) => {
-    const { entries } = get();
-    const updatedEntries = entries.map((entry) =>
-      entry.entryId === entryId ? { ...entry, keys: [...entry.keys, newKey] } : entry
-    );
+    const updatedEntries = entries.filter((entry) => entry.key !== key);
     set({ entries: updatedEntries });
   },
 }));
 
 export const useEntries = () => useEntriesStore((state) => state.entries);
-export const useEntry = (entryId: number) =>
-  useEntriesStore((state) => state.entries.find((e) => e.entryId === entryId)!);
-export const useKey = (entryId: number, keyIndex: number) =>
-  useEntriesStore((state) => state.entries.find((e) => e.entryId === entryId)!.keys[keyIndex]);
+export const useEntry = (key: string) => useEntriesStore((state) => state.entries.find((e) => e.key === key)!);
+export const useKey = (key: string) => useEntriesStore((state) => state.entries.find((e) => e.key === key));
 
 export const useEntriesStoreActions = () =>
   useEntriesStore(
-    useShallow(({ addEntry, setEntries, deleteEntry, changeFreq, changePeriod, changeKey, deleteKey, addKey }) => ({
+    useShallow(({ addEntry, setEntries, deleteEntry, changeFreq, changePeriod, deleteKey }) => ({
       addEntry,
       setEntries,
       deleteEntry,
       changeFreq,
       changePeriod,
-      changeKey,
       deleteKey,
-      addKey,
     }))
   );
